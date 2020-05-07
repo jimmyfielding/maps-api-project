@@ -14,8 +14,8 @@ func (s *server) routes() http.Handler {
 		Methods("GET").
 		Schemes("http")
 
-	r.HandleFunc("/titles", s.getTitles).
-		Methods("GET").
+	r.HandleFunc("/titles", s.generateTitles).
+		Methods("POST").
 		Schemes("http")
 
 	return r

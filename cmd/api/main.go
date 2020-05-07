@@ -1,19 +1,29 @@
 package main
 
 import (
+	"context"
+	"fmt"
 	"net/http"
 	"os"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+
+	"github.com/jimmyfielding/maps-api-project/internal/googlemaps"
 )
+
+var log = logrus.New()
+
+func main() {
+	if err := startServer(); err != nil {
+		fmt.Fprintf(os.Stderr, "%s\n", err)
+	}
+}
 
 type server struct {
 	log        *logrus.Logger
 	mapsClient googlemaps.IClient
 }
-
-var log = logrus.New()
 
 func startServer() error {
 	log.Out = os.Stdout
@@ -31,7 +41,8 @@ func startServer() error {
 		log.Fatal("../../.secrets/apiconfig.yaml is missing mapsAPIKey field")
 	}
 
-	mapsClient, err := googlemaps.NewClient(config.MapsAPIKey)
+	ctx := context.TODO()
+	mapsClient, err := googlemaps.NewClient(ctx, mapsAPIKey)
 	if err != nil {
 		log.WithFields(logrus.Fields{
 			"err": err.Error(),
